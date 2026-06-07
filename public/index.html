@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MBZ Group BV</title>
+
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#07172f">
+<style>
+:root{
+  --bg:#f4f7fb;--panel:#ffffff;--text:#0f172a;--muted:#64748b;--border:#e5e7eb;
+  --primary:#2563eb;--sidebar:#07172f;--soft:#f8fafc;
+}
+body.dark{
+  --bg:#0f172a;--panel:#172033;--text:#f8fafc;--muted:#cbd5e1;--border:#334155;
+  --primary:#3b82f6;--sidebar:#020617;--soft:#1e293b;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial;background:var(--bg);color:var(--text)}
+.hidden{display:none!important}
+button{border:0;border-radius:14px;padding:13px 18px;background:var(--primary);color:white;font-weight:bold;cursor:pointer}
+button:hover{opacity:.9}
+input,select,textarea{width:100%;padding:14px;border:1px solid var(--border);border-radius:14px;margin-bottom:12px;font-size:15px;background:var(--panel);color:var(--text)}
+.login-page{min-height:100vh;background:linear-gradient(135deg,#07172f,#2563eb);display:flex;align-items:center;justify-content:center;padding:20px}
+.login-box{width:100%;max-width:430px;background:white;color:#0f172a;padding:35px;border-radius:28px;box-shadow:0 30px 80px rgba(0,0,0,.25)}
+.logo{width:64px;height:64px;background:#2563eb;color:white;border-radius:18px;display:flex;align-items:center;justify-content:center;font-weight:bold;margin-bottom:18px}
+.login-box h1{margin:0;font-size:34px}.login-box p{color:#64748b}.login-box button{width:100%}
+.app{display:flex;min-height:100vh}.sidebar{width:290px;background:var(--sidebar);color:white;padding:22px;display:flex;flex-direction:column}
+.brand{font-size:24px;font-weight:bold;margin-bottom:30px}.menu-btn{width:100%;text-align:left;background:transparent;color:#cbd5e1;margin-bottom:10px}
+.menu-btn.active,.menu-btn:hover{background:var(--primary);color:white}.company-card{margin-top:auto;background:rgba(255,255,255,.08);padding:16px;border-radius:18px;display:grid;gap:7px}
+.logout{margin-top:14px;background:#ef4444}.main{flex:1;padding:26px}
+.topbar{background:var(--panel);padding:22px;border-radius:24px;margin-bottom:24px;box-shadow:0 10px 25px rgba(15,23,42,.05);display:flex;align-items:center;justify-content:space-between;gap:20px}
+.topbar h2{margin:0;font-size:30px}.topbar p{color:var(--muted);margin-bottom:0}
+.clock{background:var(--soft);border:1px solid var(--border);padding:12px 16px;border-radius:16px;text-align:right;min-width:190px}
+.clock strong{display:block;font-size:18px}.clock span{color:var(--muted);font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:22px}
+.card{background:var(--panel);padding:24px;border-radius:24px;box-shadow:0 10px 25px rgba(15,23,42,.05)}
+.card span{color:var(--muted)}.card h3{font-size:30px;margin:12px 0 0}.green h3{color:#16a34a}.red h3{color:#dc2626}.blue h3{color:#2563eb}.darktext h3{color:var(--text)}
+.panel{background:var(--panel);padding:24px;border-radius:24px;box-shadow:0 10px 25px rgba(15,23,42,.05);margin-bottom:22px}
+.form{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.tabs{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}.tab{background:#e8eef8;color:#0f172a}.tab.active{background:var(--primary);color:white}
+.item{background:var(--soft);padding:16px;border-radius:16px;margin-bottom:12px;border:1px solid var(--border)}
+.item strong{display:block;margin-bottom:7px}.badge{display:inline-block;padding:5px 10px;border-radius:999px;font-size:12px;font-weight:bold;margin-bottom:8px}
+.badge-income{background:#dcfce7;color:#166534}.badge-expense{background:#fee2e2;color:#991b1b}.badge-vat{background:#dbeafe;color:#1e40af}
+.upload-box{border:2px dashed #94a3b8;background:var(--soft);border-radius:20px;padding:24px}
+.folder-year{background:var(--soft);border:1px solid var(--border);padding:18px;border-radius:20px;margin-bottom:16px}
+.folder-quarter{background:var(--panel);border:1px solid var(--border);padding:15px;border-radius:16px;margin:12px 0}
+.folder-title{font-weight:bold;color:var(--primary);margin-bottom:8px;font-size:18px}
+.ai-panel{background:linear-gradient(135deg,#0f172a,#1d4ed8);color:white}.ai-panel p{color:#dbeafe;line-height:1.7}
+.danger{background:#ef4444}.muted{color:var(--muted);font-size:14px}.small-btn{padding:8px 12px;border-radius:10px;font-size:12px;margin-top:8px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:900px){.app{flex-direction:column}.sidebar{width:100%;border-radius:0 0 28px 28px}.stats,.form,.two-col{grid-template-columns:1fr}.topbar{flex-direction:column;align-items:flex-start}.clock{text-align:left}}
+</style>
+</head>
+
+<body>
+
+<div id="loginPage" class="login-page">
+  <div class="login-box">
+    <div class="logo">MBZ</div>
+    <h1>MBZ Group BV</h1>
+    <p>Boekhouding, facturen, klanten, leveranciers en archief.</p>
+    <input id="email" type="email" placeholder="E-mailadres">
+    <input id="password" type="password" placeholder="Wachtwoord">
+    <button onclick="login()">Inloggen</button>
+  </div>
+</div>
+
+<div id="appPage" class="app hidden">
+<aside class="sidebar">
+  <div class="brand">MBZ Group BV</div>
+  <button class="menu-btn active" onclick="showPage('dashboard',this)">Dashboard</button>
+  <button class="menu-btn" onclick="showPage('facturen',this)">Facturen</button>
+  <button class="menu-btn" onclick="showPage('archief',this)">Archief</button>
+  <button class="menu-btn" onclick="showPage('klanten',this)">Klanten</button>
+  <button class="menu-btn" onclick="showPage('leveranciers',this)">Leveranciers</button>
+  <button class="menu-btn" onclick="showPage('ai',this)">AI Analyse</button>
+  <button class="menu-btn" onclick="showPage('bedrijf',this)">Bedrijfsgegevens</button>
+  <button class="menu-btn" onclick="showPage('instellingen',this)">Instellingen</button>
+
+  <div class="company-card">
+    <strong>MBZ Group BV</strong>
+    <span>BTW: BE1007771305</span>
+    <span>KBO: 1007771305</span>
+    <span>Veldekensstraat 23, 9240 Zele</span>
+  </div>
+</aside>
+
+<main class="main">
+<header class="topbar">
+  <div>
+    <h2 id="pageTitle">Dashboard</h2>
+    <p>Facturen worden automatisch gesorteerd op type, jaar, kwartaal en BTW-regeling.</p>
+  </div>
+  <div id="clockBox" class="clock">
+    <strong id="clockTime">--:--:--</strong>
+    <span id="clockDate">--</span>
+  </div>
+</header>
+
+<section id="dashboard" class="page">
+  <div class="panel">
+    <h3>Dashboard filter</h3>
+    <div class="form">
+      <select id="dashboardYear" onchange="updateAll()"></select>
+      <select id="dashboardQuarter" onchange="updateAll()">
+        <option value="all">Alle kwartalen</option>
+        <option value="Q1">Q1</option>
+        <option value="Q2">Q2</option>
+        <option value="Q3">Q3</option>
+        <option value="Q4">Q4</option>
+      </select>
+      <button onclick="resetDashboardFilter()">Alles tonen</button>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="card green"><span>Inkomsten</span><h3 id="incomeTotal">€0,00</h3></div>
+    <div class="card red"><span>Uitgaven</span><h3 id="expenseTotal">€0,00</h3></div>
+    <div class="card blue"><span>Nettowinst</span><h3 id="profitTotal">€0,00</h3></div>
+    <div class="card darktext"><span>BTW saldo</span><h3 id="vatBalance">€0,00</h3></div>
+  </div>
+  <div class="two-col">
+    <div class="panel"><h3>Archief inkomsten</h3><div id="incomeArchiveOverview">Nog geen inkomsten.</div></div>
+    <div class="panel"><h3>Archief uitgaven</h3><div id="expenseArchiveOverview">Nog geen uitgaven.</div></div>
+  </div>
+</section>
+
+<section id="facturen" class="page hidden">
+  <div class="panel">
+    <h3>Factuur uploaden en automatisch analyseren</h3>
+    <p class="muted">Kies eerst zelf of het een inkomstfactuur of uitgavefactuur is. Daarna maakt het systeem een conceptanalyse die je kan controleren en aanpassen.</p>
+    <div class="upload-box">
+      <select id="manualInvoiceType">
+        <option value="income">Inkomstfactuur</option>
+        <option value="expense">Uitgavefactuur</option>
+      </select>
+      <input id="invoiceFile" type="file" accept=".pdf,.jpg,.jpeg,.png">
+      <button onclick="analyseInvoice()">Document analyseren</button>
+    </div>
+    <div id="invoiceResult"></div>
+  </div>
+
+  <div class="panel">
+    <div class="tabs">
+      <button id="tabIncome" class="tab active" onclick="setInvoiceTab('income')">Inkomstfacturen</button>
+      <button id="tabExpense" class="tab" onclick="setInvoiceTab('expense')">Uitgavefacturen</button>
+    </div>
+    <div id="invoiceList">Nog geen facturen.</div>
+  </div>
+</section>
+
+<section id="archief" class="page hidden">
+  <div class="two-col">
+    <div class="panel">
+      <h3>📁 Archief Inkomsten</h3>
+      <p class="muted">Jaar → kwartaal → inkomstfacturen.</p>
+      <div id="incomeArchiveList">Nog geen inkomsten.</div>
+    </div>
+    <div class="panel">
+      <h3>📁 Archief Uitgaven</h3>
+      <p class="muted">Jaar → kwartaal → uitgavefacturen.</p>
+      <div id="expenseArchiveList">Nog geen uitgaven.</div>
+    </div>
+  </div>
+</section>
+
+<section id="klanten" class="page hidden">
+  <div class="panel">
+    <h3>Nieuwe klant toevoegen</h3>
+    <div class="form">
+      <input id="clientName" placeholder="Bedrijfsnaam">
+      <input id="clientVat" placeholder="BTW nr">
+      <input id="clientAddress" placeholder="Adres">
+      <input id="clientPhone" placeholder="Telefoon nr">
+      <input id="clientContact" placeholder="Contactpersoon">
+      <button onclick="addClient()">Klant toevoegen</button>
+    </div>
+  </div>
+  <div class="panel"><h3>Klanten</h3><div id="clientList">Nog geen klanten.</div></div>
+</section>
+
+<section id="leveranciers" class="page hidden">
+  <div class="panel">
+    <h3>Nieuwe leverancier toevoegen</h3>
+    <div class="form">
+      <input id="supplierName" placeholder="Bedrijfsnaam">
+      <input id="supplierVat" placeholder="BTW nr">
+      <input id="supplierAddress" placeholder="Adres">
+      <input id="supplierPhone" placeholder="Telefoon nr">
+      <input id="supplierContact" placeholder="Contactpersoon">
+      <button onclick="addSupplierManual()">Leverancier toevoegen</button>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>Leveranciers</h3>
+    <p class="muted">Leveranciers worden ook automatisch toegevoegd uit uitgavefacturen. Dubbel toevoegen wordt geblokkeerd via BTW nr.</p>
+    <div id="supplierList">Nog geen leveranciers.</div>
+  </div>
+</section>
+
+<section id="ai" class="page hidden">
+  <div class="panel ai-panel">
+    <h3>AI Analyse</h3>
+    <p id="aiText">Nog geen analyse.</p>
+    <button onclick="runAI()">Analyse starten</button>
+  </div>
+</section>
+
+<section id="bedrijf" class="page hidden">
+  <div class="panel">
+    <h3>Bedrijfsgegevens</h3>
+    <p><b>Bedrijfsnaam:</b> MBZ Group BV</p>
+    <p><b>BTW-nummer:</b> BE1007771305</p>
+    <p><b>KBO nummer:</b> 1007771305</p>
+    <p><b>Adres:</b> Veldekensstraat 23, 9240 Zele</p>
+    <p><b>Land:</b> België</p>
+  </div>
+
+  <div class="panel">
+    <h3>Bedrijfsdocumenten map</h3>
+    <p class="muted">Voeg hier documenten toe zoals statuten, verzekering, bankdocumenten, vergunningen of contracten.</p>
+    <div class="upload-box">
+      <input id="companyDocFile" type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+      <select id="companyDocType">
+        <option>Statuten</option>
+        <option>Verzekering</option>
+        <option>Bankdocument</option>
+        <option>Contract</option>
+        <option>Vergunning</option>
+        <option>Andere</option>
+      </select>
+      <button onclick="addCompanyDocument()">Document opslaan</button>
+    </div>
+    <div id="companyDocList">Nog geen bedrijfsdocumenten.</div>
+  </div>
+</section>
+
+<section id="instellingen" class="page hidden">
+  <div class="panel">
+    <h3>Login wijzigen</h3>
+    <input id="newEmail" type="email" placeholder="Nieuw e-mailadres">
+    <input id="newPassword" type="password" placeholder="Nieuw wachtwoord">
+    <button onclick="changeLogin()">Login opslaan</button>
+  </div>
+
+  <div class="panel">
+    <h3>Weergave en tijd instellingen</h3>
+    <select id="themeSelect">
+      <option value="light">Lichte modus</option>
+      <option value="dark">Donkere modus</option>
+    </select>
+    <select id="currencySelect">
+      <option value="EUR">Valuta: EUR</option>
+      <option value="USD">Valuta: USD</option>
+    </select>
+    <select id="languageSelect">
+      <option value="nl">Taal: Nederlands</option>
+      <option value="tr">Taal: Türkçe</option>
+      <option value="en">Taal: English</option>
+    </select>
+    <select id="dateSelect">
+      <option value="nl-BE">Datum formaat: België</option>
+      <option value="tr-TR">Datum formaat: Türkiye</option>
+      <option value="en-GB">Datum formaat: UK</option>
+    </select>
+    <select id="timeZoneSelect">
+      <option value="Europe/Brussels">Tijdzone: België / Brussel</option>
+      <option value="Europe/Istanbul">Tijdzone: Türkiye / Istanbul</option>
+      <option value="UTC">Tijdzone: UTC</option>
+    </select>
+    <select id="clockSelect">
+      <option value="show">Klok tonen rechtsboven</option>
+      <option value="hide">Klok verbergen</option>
+    </select>
+    <button onclick="saveSettings()">Instellingen opslaan</button>
+  </div>
+
+  <div class="panel">
+    <h3>Belgische BTW-regels</h3>
+    <p class="muted">Kies welke BTW-regels actief zijn. De automatische analyse zet een notitie op de factuur wanneer woorden zoals “medecontractant”, “verlegging” of “heffing” gevonden worden.</p>
+    <select id="vatDefault">
+      <option value="21">Standaard BTW 21%</option>
+      <option value="12">Standaard BTW 12%</option>
+      <option value="6">Standaard BTW 6%</option>
+      <option value="0">Standaard BTW 0%</option>
+    </select>
+    <label><input id="ruleStandard" type="checkbox"> Normale BTW-regeling</label><br>
+    <label><input id="ruleCocontractant" type="checkbox"> Medecontractant / BTW verlegd</label><br>
+    <label><input id="ruleIntracom" type="checkbox"> Intracommunautaire levering / verwerving</label><br>
+    <label><input id="ruleExempt" type="checkbox"> Vrijstelling van BTW</label><br>
+    <label><input id="ruleReverse" type="checkbox"> Reverse charge / verleggingsregeling</label><br><br>
+    <input id="invoicePrefix" placeholder="Factuur prefix bijvoorbeeld MBZ-">
+    <button onclick="saveSettings()">BTW instellingen opslaan</button>
+  </div>
+
+  <div class="panel">
+    <h3>Data beheer</h3>
+    <button class="danger" onclick="resetData()">Alle data verwijderen</button>
+  </div>
+
+  <div class="panel">
+    <h3>Uitloggen</h3>
+    <p class="muted">Hier kan je veilig uitloggen.</p>
+    <button class="logout" onclick="logout()">Uitloggen</button>
+  </div>
+</section>
+</main>
+</div>
+
+
+<script>
+let invoiceTab = "income";
+let invoices = [];
+let clients = [];
+let suppliers = [];
+let companyDocs = JSON.parse(localStorage.getItem("companyDocs")) || [];
+let loginEmail = localStorage.getItem("loginEmail") || "mbzgroup@outlook.com";
+let loginPassword = localStorage.getItem("loginPassword") || "Batu1234";
+let settings = JSON.parse(localStorage.getItem("settings")) || {theme:"light",currency:"EUR",language:"nl",dateFormat:"nl-BE",timeZone:"Europe/Brussels",clock:"show",vatDefault:"21",invoicePrefix:"MBZ-",rules:{standard:true,cocontractant:true,intracom:true,exempt:true,reverse:true}};
+applySettings();
+setInterval(updateClock,1000);
+
+function login(){ if(email.value===loginEmail && password.value===loginPassword){ loginPage.classList.add("hidden"); appPage.classList.remove("hidden"); loadAll(); updateClock(); } else alert("E-mailadres of wachtwoord is fout."); }
+function logout(){ appPage.classList.add("hidden"); loginPage.classList.remove("hidden"); }
+function showPage(id,btn){ document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden")); document.getElementById(id).classList.remove("hidden"); document.querySelectorAll(".menu-btn").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); const titles={dashboard:"Dashboard",facturen:"Facturen",archief:"Archief",klanten:"Klanten",leveranciers:"Leveranciers",ai:"AI Analyse",bedrijf:"Bedrijfsgegevens",instellingen:"Instellingen"}; pageTitle.innerText=titles[id]; updateAll(); }
+async function loadAll(){ await Promise.all([loadInvoicesFromServer(),loadClientsFromServer(),loadSuppliersFromServer()]); updateAll(); }
+async function loadInvoicesFromServer(){ const res=await fetch("/api/facturen"); const data=await res.json(); invoices=data.map(f=>({id:f.id,kind:f.type==="inkomst"?"income":"expense",label:f.type==="inkomst"?"Inkomstfactuur":"Uitgavefactuur",file:f.bestand||"",company:f.bedrijfsnaam||f.klantNaam||f.leverancierNaam||"Onbekend",vat:f.btwNummer||"",address:f.adres||"",phone:f.telefoon||"",contact:f.contactpersoon||"",net:Number(f.netto||0),btw:Number(f.btw||0),bruto:Number(f.bruto||0),year:f.jaar||new Date().getFullYear(),quarter:f.kwartaal||"Q1",date:f.datum||"",vatRule:f.btwRegeling||"Normale BTW-regeling",note:f.notitie||""})); }
+async function loadClientsFromServer(){ const res=await fetch("/api/klanten"); const data=await res.json(); clients=data.map(k=>({id:k.id,name:k.bedrijfsnaam||"Onbekende klant",vat:k.btwNummer||"",address:k.adres||"",phone:k.telefoon||"",contact:k.contactpersoon||""})); }
+async function loadSuppliersFromServer(){ const res=await fetch("/api/leveranciers"); const data=await res.json(); suppliers=data.map(s=>({id:s.id,name:s.bedrijfsnaam||"Onbekende leverancier",vat:s.btwNummer||"",address:s.adres||"",phone:s.telefoon||"",contact:s.contactpersoon||""})); }
+function updateClock(){ if(settings.clock==="hide"){clockBox.classList.add("hidden");return} clockBox.classList.remove("hidden"); const now=new Date(); clockTime.innerText=now.toLocaleTimeString(settings.dateFormat,{timeZone:settings.timeZone}); clockDate.innerText=now.toLocaleDateString(settings.dateFormat,{timeZone:settings.timeZone,weekday:"long",year:"numeric",month:"long",day:"numeric"}); }
+async function analyseInvoice(){ const file=invoiceFile.files[0]; if(!file){alert("Kies eerst een factuur.");return} invoiceResult.innerHTML='<div class="item"><strong>Factuur wordt gelezen...</strong><br>PDF wordt geüpload en automatisch geanalyseerd.</div>'; const formData=new FormData(); formData.append("factuur",file); try{ const res=await fetch("/api/upload-factuur",{method:"POST",body:formData}); const result=await res.json(); if(!result.success){alert(result.error||"Analyse mislukt.");return} await loadAll(); const f=result.analyse; const kind=f.type==="inkomst"?"income":"expense"; invoiceResult.innerHTML=`<div class="item"><span class="badge ${kind==="income"?"badge-income":"badge-expense"}">${kind==="income"?"Inkomstfactuur":"Uitgavefactuur"}</span> <span class="badge badge-vat">${f.btwRegeling||"Normale BTW-regeling"}</span><strong>Factuur automatisch geanalyseerd</strong>Bestand: ${f.bestand||file.name}<br>Factuurnummer: ${f.factuurnummer||"-"}<br>Datum: ${f.datum||"-"}<br>BTW nr: ${f.btwNummer||"-"}<br>Dossier: ${f.jaar||"-"} / ${f.kwartaal||"-"}<br>Netto: ${money(Number(f.netto||0))} | BTW: ${money(Number(f.btw||0))} | Bruto: ${money(Number(f.bruto||0))}<br><b>Notitie:</b> ${f.notitie||"Geen notitie."}</div>`; }catch(err){invoiceResult.innerHTML=`<div class="item"><strong>Fout bij analyse</strong><br>${err.message}</div>`;} }
+async function addClient(){ const body={bedrijfsnaam:clientName.value,btwNummer:clientVat.value,adres:clientAddress.value,telefoon:clientPhone.value,contactpersoon:clientContact.value}; if(!body.bedrijfsnaam||!body.btwNummer){alert("Bedrijfsnaam en BTW nr zijn verplicht.");return} await fetch("/api/klanten",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}); clientName.value=clientVat.value=clientAddress.value=clientPhone.value=clientContact.value=""; await loadAll(); }
+async function addSupplierManual(){ const body={bedrijfsnaam:supplierName.value,btwNummer:supplierVat.value,adres:supplierAddress.value,telefoon:supplierPhone.value,contactpersoon:supplierContact.value}; if(!body.bedrijfsnaam||!body.btwNummer){alert("Bedrijfsnaam en BTW nr zijn verplicht.");return} await fetch("/api/leveranciers",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}); supplierName.value=supplierVat.value=supplierAddress.value=supplierPhone.value=supplierContact.value=""; await loadAll(); }
+function setInvoiceTab(tab){ invoiceTab=tab; tabIncome.classList.toggle("active",tab==="income"); tabExpense.classList.toggle("active",tab==="expense"); renderInvoices(); }
+function renderInvoices(){ const filtered=invoices.filter(i=>i.kind===invoiceTab); if(filtered.length===0){invoiceList.innerHTML=invoiceTab==="income"?"Nog geen inkomstfacturen.":"Nog geen uitgavefacturen.";return} invoiceList.innerHTML=filtered.slice().reverse().map(invoiceCard).join(""); }
+function invoiceCard(i){ return `<div class="item"><span class="badge ${i.kind==="income"?"badge-income":"badge-expense"}">${i.label}</span> <span class="badge badge-vat">${i.vatRule||"Normale BTW-regeling"}</span><strong>${i.company||i.file||"Factuur"}</strong>Bestand: ${i.file||"-"}<br>Datum: ${i.date||"-"}<br>Archief: ${i.year||"-"} / ${i.quarter||"-"}<br>BTW nr: ${i.vat||"-"}<br>Netto: ${money(i.net)} | BTW: ${money(i.btw)} | Bruto: ${money(i.bruto)}<br><b>Notitie:</b> ${i.note||"Geen notitie."}<br><button class="danger small-btn" onclick="deleteInvoice(${i.id})">Factuur verwijderen</button></div>`; }
+async function deleteInvoice(id){ if(!confirm("Weet je zeker dat je deze factuur wilt verwijderen?"))return; await fetch("/api/facturen/"+id,{method:"DELETE"}); await loadAll(); invoiceResult.innerHTML=""; }
+function renderArchive(targetId,kind){ const box=document.getElementById(targetId); const list=invoices.filter(i=>i.kind===kind); if(list.length===0){box.innerHTML=kind==="income"?"Nog geen inkomsten.":"Nog geen uitgaven.";return} let years={}; list.forEach(i=>{if(!years[i.year])years[i.year]={}; if(!years[i.year][i.quarter])years[i.year][i.quarter]=[]; years[i.year][i.quarter].push(i);}); box.innerHTML=""; Object.keys(years).sort().reverse().forEach(year=>{let html=`<div class="folder-year"><div class="folder-title">📁 Jaar ${year}</div>`; Object.keys(years[year]).sort().forEach(q=>{let arr=years[year][q]; let total=arr.reduce((s,i)=>s+Number(i.bruto||0),0); html+=`<div class="folder-quarter"><div class="folder-title">📂 ${q} — ${arr.length} facturen — ${money(total)}</div>${arr.map(invoiceCard).join("")}</div>`;}); html+=`</div>`; box.innerHTML+=html;}); }
+function addCompanyDocument(){ const file=companyDocFile.files[0]; if(!file){alert("Kies eerst een bedrijfsdocument.");return} companyDocs.push({file:file.name,type:companyDocType.value,date:new Date().toLocaleDateString(settings.dateFormat)}); localStorage.setItem("companyDocs",JSON.stringify(companyDocs)); companyDocFile.value=""; renderCompanyDocs(); }
+function renderCompanyDocs(){ if(companyDocs.length===0){companyDocList.innerHTML="Nog geen bedrijfsdocumenten.";return} companyDocList.innerHTML=companyDocs.slice().reverse().map(d=>`<div class="item"><strong>${d.type}</strong>Bestand: ${d.file}<br>Datum: ${d.date}</div>`).join(""); }
+function renderClients(){ if(clients.length===0){clientList.innerHTML="Nog geen klanten.";return} clientList.innerHTML=clients.map(c=>`<div class="item"><strong>${c.name}</strong>BTW nr: ${c.vat}<br>Adres: ${c.address}<br>Telefoon: ${c.phone}<br>Contactpersoon: ${c.contact}</div>`).join(""); }
+function renderSuppliers(){ if(suppliers.length===0){supplierList.innerHTML="Nog geen leveranciers.";return} supplierList.innerHTML=suppliers.map(s=>`<div class="item"><strong>${s.name}</strong>BTW nr: ${s.vat}<br>Adres: ${s.address}<br>Telefoon: ${s.phone}<br>Contactpersoon: ${s.contact}</div>`).join(""); }
+function updateDashboardYearOptions(){ if(!document.getElementById("dashboardYear"))return; const years=[...new Set(invoices.map(i=>i.year))].sort().reverse(); const current=dashboardYear.value||"all"; dashboardYear.innerHTML='<option value="all">Alle jaren</option>'+years.map(y=>`<option value="${y}">${y}</option>`).join(""); dashboardYear.value=years.includes(current)?current:"all"; }
+function getDashboardFilteredInvoices(){ if(!document.getElementById("dashboardYear"))return invoices; const y=dashboardYear.value; const q=dashboardQuarter.value; return invoices.filter(i=>(y==="all"||String(i.year)===String(y))&&(q==="all"||i.quarter===q)); }
+function resetDashboardFilter(){ dashboardYear.value="all"; dashboardQuarter.value="all"; updateAll(); }
+function updateAll(){ updateDashboardYearOptions(); const filtered=getDashboardFilteredInvoices(); const income=filtered.filter(i=>i.kind==="income").reduce((s,i)=>s+Number(i.bruto||0),0); const expense=filtered.filter(i=>i.kind==="expense").reduce((s,i)=>s+Number(i.bruto||0),0); const vatOut=filtered.filter(i=>i.kind==="income").reduce((s,i)=>s+Number(i.btw||0),0); const vatIn=filtered.filter(i=>i.kind==="expense").reduce((s,i)=>s+Number(i.btw||0),0); incomeTotal.innerText=money(income); expenseTotal.innerText=money(expense); profitTotal.innerText=money(income-expense); vatBalance.innerText=money(vatOut-vatIn); renderInvoices();renderClients();renderSuppliers();renderCompanyDocs(); renderArchive("incomeArchiveOverview","income");renderArchive("expenseArchiveOverview","expense"); renderArchive("incomeArchiveList","income");renderArchive("expenseArchiveList","expense"); }
+function runAI(){ const inc=invoices.filter(i=>i.kind==="income"), exp=invoices.filter(i=>i.kind==="expense"); const special=invoices.filter(i=>i.vatRule&&i.vatRule!=="Normale BTW-regeling").length; aiText.innerText=`Analyse: ${inc.length} inkomstfacturen, ${exp.length} uitgavefacturen. Bijzondere BTW-regelingen gevonden: ${special}. Archief is gescheiden in inkomsten en uitgaven, daarna per jaar en kwartaal. Leveranciers en klanten worden via BTW nr gecontroleerd.`; }
+function changeLogin(){ if(!newEmail.value||!newPassword.value){alert("Vul nieuw e-mailadres en wachtwoord in.");return} loginEmail=newEmail.value; loginPassword=newPassword.value; localStorage.setItem("loginEmail",loginEmail); localStorage.setItem("loginPassword",loginPassword); alert("Login gewijzigd."); }
+function saveSettings(){ settings.theme=themeSelect.value; settings.currency=currencySelect.value; settings.language=languageSelect.value; settings.dateFormat=dateSelect.value; settings.timeZone=timeZoneSelect.value; settings.clock=clockSelect.value; settings.vatDefault=vatDefault.value; settings.invoicePrefix=invoicePrefix.value||"MBZ-"; settings.rules={standard:ruleStandard.checked,cocontractant:ruleCocontractant.checked,intracom:ruleIntracom.checked,exempt:ruleExempt.checked,reverse:ruleReverse.checked}; localStorage.setItem("settings",JSON.stringify(settings)); applySettings();updateAll();updateClock(); alert("Instellingen opgeslagen."); }
+function applySettings(){ document.body.classList.toggle("dark",settings.theme==="dark"); setTimeout(()=>{if(document.getElementById("themeSelect")){themeSelect.value=settings.theme;currencySelect.value=settings.currency;languageSelect.value=settings.language;dateSelect.value=settings.dateFormat;timeZoneSelect.value=settings.timeZone;clockSelect.value=settings.clock;vatDefault.value=settings.vatDefault;invoicePrefix.value=settings.invoicePrefix;ruleStandard.checked=settings.rules.standard;ruleCocontractant.checked=settings.rules.cocontractant;ruleIntracom.checked=settings.rules.intracom;ruleExempt.checked=settings.rules.exempt;ruleReverse.checked=settings.rules.reverse;}},50); }
+function resetData(){ if(!confirm("Alle lokale instellingen en bedrijfsdocumenten verwijderen?"))return; companyDocs=[]; localStorage.removeItem("companyDocs"); renderCompanyDocs(); alert("Lokale gegevens verwijderd. Facturen/klanten/leveranciers staan op de server."); }
+function cleanVat(v){return String(v).replace(/\s|\./g,"").toUpperCase()}
+function money(n){return Number(n||0).toLocaleString("nl-BE",{style:"currency",currency:settings.currency||"EUR"})}
+</script>
+</body>
+</html>
